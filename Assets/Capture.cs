@@ -8,6 +8,7 @@ public class Capture : MonoBehaviour {
 	[SerializeField] string deviceName;
 	public RawImage webcamTexture;
 	public RawImage processedTexture;
+	public Slider slider;
 	Texture2D texture;
 	WebCamTexture wct;
 
@@ -136,17 +137,25 @@ public class Capture : MonoBehaviour {
 	}
 
 	bool CheckColor(Color color1, Color color2){
-		var threshold = 0.2f;
+		var threshold = slider.value;
 		bool isRedGood = Mathf.Abs(color1.r - color2.r) <= threshold;
 		bool isGreenGood = Mathf.Abs(color1.g - color2.g) <= threshold;
 		bool isBlueGood = Mathf.Abs(color1.b - color2.b) <= threshold;
 		bool isAlphaGood = Mathf.Abs(color1.a - color2.a) <= threshold;
 		return isRedGood && isGreenGood && isBlueGood && isAlphaGood;
+
+//		LABColor lc1 = LABColor.FromColor(color1);
+//		LABColor lc2 = LABColor.FromColor (color2);
+//		Debug.Log (LABColor.Distance (lc1, lc2));
+//		if (LABColor.Distance (lc1, lc2) < 29f) {
+//			return true;
+//		} else {
+//			return false;
+//		}
 	}
 
 	void SaveTextureToFile( Texture2D texture, string fileName)
 	{
-		Debug.Log (Application.dataPath);
 		System.IO.File.WriteAllBytes(Application.dataPath + "/Resources/"+fileName+".png", texture.EncodeToPNG()); 
 	}
 }

@@ -20,7 +20,7 @@ public class Capture : MonoBehaviour {
 	void LoadFromResource(){
 		texture = Resources.Load<Texture2D> ("0");
 		var bits = texture.GetPixels ();
-		bits = ReverseXPixels (bits, texture.width, texture.height);
+
 		texture.SetPixels(bits);
 		texture.Apply();
 		var tempText = texture;
@@ -30,35 +30,19 @@ public class Capture : MonoBehaviour {
 	void LoadFromResource2(){
 		texture = Resources.Load<Texture2D> ("test");
 		var bits = texture.GetPixels ();
-		bits = ReverseXPixels (bits, texture.width, texture.height);
+
 		texture.SetPixels(bits);
 		texture.Apply();
 
 		webcamTexture.texture = texture;
 	}
 		
-	bool StartWebcam(){
+	void StartWebcam(){
 		WebCamDevice[] devices = WebCamTexture.devices;
-		if (devices.Length > 0) {
-			deviceName = devices [0].name;
-			wct = new WebCamTexture (deviceName, 1280, 720, 12);
-			texture = new Texture2D(wct.width, wct.height);
-			webcamTexture.texture = texture;
-			wct.Play ();
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	void Update(){
-		if (wct != null && texture != null) {
-			var bits = wct.GetPixels ();
-			bits = ReverseXPixels (bits, wct.width, wct.height);
-
-			texture.SetPixels(bits);
-			texture.Apply();
-		}
+		deviceName = devices[0].name;
+		wct = new WebCamTexture(deviceName, 1080, 720, 12);
+		webcamTexture.texture = wct;
+		wct.Play();
 	}
 
 	void OnGUI() {      
@@ -71,8 +55,8 @@ public class Capture : MonoBehaviour {
 		if (GUI.Button (new Rect (Screen.width / 2, 10, 100, 30), "Reload"))
 			SceneManager.LoadScene (0);
 
-		if (GUI.Button (new Rect (Screen.width - 110, 10, 100, 30), "Load res"))
-			LoadFromResource ();
+//		if (GUI.Button (new Rect (Screen.width - 110, 10, 100, 30), "Load res"))
+//			LoadFromResource ();
 
 		if (GUI.Button (new Rect (Screen.width - 110, 50, 100, 30), "Load test"))
 			LoadFromResource2 ();
@@ -87,12 +71,12 @@ public class Capture : MonoBehaviour {
 	{
 		Texture2D texture = new Texture2D(wct.width, wct.height);
 		var bits = wct.GetPixels ();
+//		bits = ReverseXPixels (bits, texture.width, texture.height);
+//		texture.SetPixels(bits);
+//		texture.Apply();
+//		SaveTextureToFile (texture, "0");
 
-		texture.SetPixels(bits);
-		texture.Apply();
-		SaveTextureToFile (texture, "0");
-
-		var colorToRemove = bits[0];
+		var colorToRemove = bits[wct.width * wct.height - 1];
 		for (int i = 0; i < bits.Length; i++) {
 			if ( CheckColor(bits[i], colorToRemove) ) {
 				bits [i] = Color.clear;
@@ -101,15 +85,17 @@ public class Capture : MonoBehaviour {
 
 		texture.SetPixels(bits);
 		texture.Apply();
-		SaveTextureToFile (texture, "1");
+//		SaveTextureToFile (texture, "1");
 
 		processedTexture.texture = texture;
+		processedTexture.gameObject.SetActive (true);
+		webcamTexture.gameObject.SetActive (false);
 	}
 
 	void RemoveBgFromTexture()
 	{
 		var bits = texture.GetPixels ();
-
+//		bits = ReverseXPixels (bits, texture.width, texture.height);
 		var colorToRemove = bits[0];
 		for (int i = 0; i < bits.Length; i++) {
 			if ( CheckColor(bits[i], colorToRemove) ) {
@@ -119,9 +105,11 @@ public class Capture : MonoBehaviour {
 
 		texture.SetPixels(bits);
 		texture.Apply();
-		SaveTextureToFile (texture, "2");
+//		SaveTextureToFile (texture, "2");
 
 		processedTexture.texture = texture;
+		processedTexture.gameObject.SetActive (true);
+		webcamTexture.gameObject.SetActive (false);
 	}
 
 	Color[] ReverseXPixels(Color[] bits, int w, int h){

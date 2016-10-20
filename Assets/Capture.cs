@@ -46,22 +46,24 @@ public class Capture : MonoBehaviour {
 	}
 
 	void OnGUI() {      
-		if (GUI.Button (new Rect (10, 10, 100, 30), "Start webcam"))
+		if (GUI.Button (new Rect (10, 10, 100, 100), "Start webcam"))
 			StartWebcam ();
 
-		if (GUI.Button (new Rect (10, 50, 100, 30), "rm bg"))
+		if (GUI.Button (new Rect (10, 120, 100, 100), "rm bg"))
 			RemoveBgFromWebcamTexture ();
 
-		if (GUI.Button (new Rect (Screen.width / 2, 10, 100, 30), "Reload"))
-			SceneManager.LoadScene (0);
+		if (GUI.Button (new Rect (10, 230, 100, 100), "Reset cam")) {
+			processedTexture.gameObject.SetActive (false);
+			webcamTexture.gameObject.SetActive (true);
+		}
 
 //		if (GUI.Button (new Rect (Screen.width - 110, 10, 100, 30), "Load res"))
 //			LoadFromResource ();
 
-		if (GUI.Button (new Rect (Screen.width - 110, 50, 100, 30), "Load test"))
+		if (GUI.Button (new Rect (Screen.width - 110, 10, 100, 100), "Load test"))
 			LoadFromResource2 ();
 
-		if (GUI.Button (new Rect (Screen.width - 110, 90, 100, 30), "rm bg"))
+		if (GUI.Button (new Rect (Screen.width - 110, 120, 100, 100), "rm bg"))
 			RemoveBgFromTexture ();
 
 
@@ -76,7 +78,7 @@ public class Capture : MonoBehaviour {
 //		texture.Apply();
 //		SaveTextureToFile (texture, "0");
 
-		var colorToRemove = bits[wct.width * wct.height - 1];
+		var colorToRemove = bits[wct.width * wct.height - wct.width];
 		for (int i = 0; i < bits.Length; i++) {
 			if ( CheckColor(bits[i], colorToRemove) ) {
 				bits [i] = Color.clear;
